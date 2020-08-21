@@ -1,0 +1,23 @@
+{
+    "name": "bristol-su/api-client-toolkit",
+    "description": "A set of interfaces and tools for adding to the PHP Api Client for the portal",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Toby Twigger",
+            "email": "tobytwigger1@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "BristolSU\\ApiClientContract\\": "src/"
+        },
+        "classmap": []
+    },
+    "autoload-dev": {}
+}
