@@ -10,7 +10,7 @@
   ],
   "require": {
     "php": "^7.2",
-    "illuminate/container": "^7.25"
+    "psr/http-client": "^1.0"
   },
   "require-dev": {
   },
