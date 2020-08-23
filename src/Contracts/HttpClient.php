@@ -2,16 +2,27 @@
 
 namespace BristolSU\ApiToolkit\Contracts;
 
-use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\ResponseInterface;
 
 interface HttpClient
 {
 
-    public function addHeader(string $key, string $value): void;
+    public function global(): \BristolSU\ApiToolkit\Contracts\HttpClientConfig;
 
-    public function setBaseUrl(string $baseUrl): void;
+    public function config(): \BristolSU\ApiToolkit\Contracts\HttpClientConfig;
 
-    public function addBody(array $body): void;
+    public function options(): array;
 
-    public function addBodyElement(string $key, $element): void;
+    public function request(string $method, string $uri): ResponseInterface;
+
+    public function post(string $uri): ResponseInterface;
+
+    public function get(string $uri): ResponseInterface;
+
+    public function patch(string $uri): ResponseInterface;
+
+    public function delete(string $uri): ResponseInterface;
+
+    public function put(string $uri): ResponseInterface;
+
 }
