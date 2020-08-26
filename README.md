@@ -1,21 +1,21 @@
 <p align="center">
-  <a href="https://github.com/bristol-su/static-page">
+  <a href="https://github.com/bristol-su/api-client-toolkit">
     <img src="https://s3.eu-west-2.amazonaws.com/bristol-su-static-bucket/committee-portal/su-logo.jpg" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Static Page</h3>
+  <h3 align="center">API Client Toolkit</h3>
 
   <p align="center">
-    A simple page to display predefined HTML to users
+    A toolkit for creating an API Client for a module
     <br />
     <a href="https://docs.bristolsustaging.co.uk"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/bristol-su/portal">View Portal</a>
     ·
-    <a href="https://github.com/bristol-su/static-page/issues/new?template=bug_report.md">Report Bug</a>
+    <a href="https://github.com/bristol-su/api-client-toolkit/issues/new?template=bug_report.md">Report Bug</a>
     ·
-    <a href="https://github.com/bristol-su/static-page/issues/new?template=feature_request.md">Request Feature</a>
+    <a href="https://github.com/bristol-su/api-client-toolkit/issues/new?template=feature_request.md">Request Feature</a>
   </p>
 </p>
 
@@ -48,26 +48,24 @@
 * [Contact](#contact)
 
 
-## About The Module
+## About The Toolkit
 
-This module shows predefined HTML to the user.
+This is a toolkit to help build an API client for the portal.
 
-- Fully-featured WYSIWGY editor for defining the page
-- Track page views
-- Allow for a button to mark the module as complete
+The [Bristol SU Api Client](https://github.com/bristol-su/api-client) is a flexible API client for authenticating and accessing any API on the portal. Your module is able to register its own API routes in the client to allow others to consume your module API.
 
 ## Getting Started
 
-All you need to do to get started using this module is pull it into the portal or the playground!
+All you need to do to get started is pull the toolkit into a package, and follow the documentation.
 
 ```sh
-composer require bristol-su/static-page
+composer require bristol-su/api-client-toolkit
 ```
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/bristol-su/static-page/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/bristol-su/api-client-toolkit/issues) for a list of proposed features (and known issues).
 
 
 <!-- CONTRIBUTING -->
@@ -96,26 +94,26 @@ Distributed under the GPL-3.0 License. See `LICENSE` for more information.
 
 Toby Twigger - [toby.twigger@bristol.ac.uk](mailto:toby.twigger@bristol.ac.uk)
 
-Project Link: [https://github.com/bristol-su/static-page](https://github.com/bristol-su/static-page)
+Project Link: [https://github.com/bristol-su/api-client-toolkit](https://github.com/bristol-su/api-client-toolkit)
 
 
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[release-shield]: https://img.shields.io/packagist/v/bristol-su/static-page?include_prereleases&style=for-the-badge
-[release-url]: https://github.com/bristol-su/static-page
-[coverage-shield]: https://img.shields.io/scrutinizer/coverage/g/bristol-su/static-page/master?style=for-the-badge
-[coverage-url]: https://scrutinizer-ci.com/g/bristol-su/static-page/build-status/masterhttps://github.com/bristol-su/static-page
-[build-status-shield]: https://img.shields.io/scrutinizer/build/g/bristol-su/static-page/master?style=for-the-badge
-[build-status-url]: https://scrutinizer-ci.com/g/bristol-su/static-page/build-status/master
-[downloads-shield]: https://img.shields.io/packagist/dt/bristol-su/static-page?style=for-the-badge
-[downloads-url]: https://packagist.org/packages/bristol-su/static-page
-[code-quality-shield]: https://img.shields.io/scrutinizer/quality/g/bristol-su/static-page/master?style=for-the-badge
-[code-quality-url]: https://scrutinizer-ci.com/g/bristol-su/static-page/?branch=master
-[stars-shield]: https://img.shields.io/github/stars/bristol-su/static-page?style=for-the-badge
-[stars-url]: https://github.com/bristol-su/static-page/stargazers
-[issues-shield]: https://img.shields.io/github/issues/bristol-su/static-page?style=for-the-badge
-[issues-url]: https://github.com/bristol-su/static-page/issues
-[license-shield]: https://img.shields.io/github/license/bristol-su/static-page?style=for-the-badge
-[license-url]: https://github.com/bristol-su/static-page/blob/master/LICENCE.md
+[release-shield]: https://img.shields.io/packagist/v/bristol-su/api-client-toolkit?include_prereleases&style=for-the-badge
+[release-url]: https://github.com/bristol-su/api-client-toolkit
+[coverage-shield]: https://img.shields.io/scrutinizer/coverage/g/bristol-su/api-client-toolkit/master?style=for-the-badge
+[coverage-url]: https://scrutinizer-ci.com/g/bristol-su/api-client-toolkit/build-status/masterhttps://github.com/bristol-su/api-client-toolkit
+[build-status-shield]: https://img.shields.io/scrutinizer/build/g/bristol-su/api-client-toolkit/master?style=for-the-badge
+[build-status-url]: https://scrutinizer-ci.com/g/bristol-su/api-client-toolkit/build-status/master
+[downloads-shield]: https://img.shields.io/packagist/dt/bristol-su/api-client-toolkit?style=for-the-badge
+[downloads-url]: https://packagist.org/packages/bristol-su/api-client-toolkit
+[code-quality-shield]: https://img.shields.io/scrutinizer/quality/g/bristol-su/api-client-toolkit/master?style=for-the-badge
+[code-quality-url]: https://scrutinizer-ci.com/g/bristol-su/api-client-toolkit/?branch=master
+[stars-shield]: https://img.shields.io/github/stars/bristol-su/api-client-toolkit?style=for-the-badge
+[stars-url]: https://github.com/bristol-su/api-client-toolkit/stargazers
+[issues-shield]: https://img.shields.io/github/issues/bristol-su/api-client-toolkit?style=for-the-badge
+[issues-url]: https://github.com/bristol-su/api-client-toolkit/issues
+[license-shield]: https://img.shields.io/github/license/bristol-su/api-client-toolkit?style=for-the-badge
+[license-url]: https://github.com/bristol-su/api-client-toolkit/blob/master/LICENCE.md
