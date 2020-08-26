@@ -2,14 +2,17 @@
 
 namespace BristolSU\ApiToolkit\Contracts;
 
+use BristolSU\ApiToolkit\HttpClientConfig;
 use Psr\Http\Message\ResponseInterface;
 
 interface HttpClient
 {
 
-    public function global(): \BristolSU\ApiToolkit\Contracts\HttpClientConfig;
+    public function global(): HttpClientConfig;
 
-    public function config(): \BristolSU\ApiToolkit\Contracts\HttpClientConfig;
+    public function config(): HttpClientConfig;
+
+    public function mergedConfig(): HttpClientConfig;
 
     public function options(): array;
 

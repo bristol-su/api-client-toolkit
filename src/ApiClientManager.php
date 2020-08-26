@@ -5,7 +5,7 @@ namespace BristolSU\ApiToolkit;
 use BristolSU\ApiToolkit\Contracts\ClientResourceGroup;
 use BristolSU\ApiToolkit\Exception\ClientNotRegisteredException;
 
-class ApiClientManager implements \BristolSU\ApiToolkit\Contracts\ApiClientManager
+class ApiClientManager
 {
 
     /**

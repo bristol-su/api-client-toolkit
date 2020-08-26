@@ -1,3 +1,92 @@
 = Introduction
 
-An intro to the interfaces
+The toolkit is how you create your own API client to be used. Eventually, someone using the API client can pull in your client package and instantly be able to consume your API.
+
+## Setup
+
+Set up your package. Require ```bristol-su/api-client-toolkit```.
+
+## Create a Client
+
+First, you need to create a 'Client'. This is a class that extends ```BristolSU\ApiToolkit\Contracts\ClientResourceGroup```. It must define a method name, which should be your module alias, and resources your client registers.
+
+The method name will be called by the user to access your client - for example, if our module was 'upload-file', the method name may be 'uploadFile'. Then, someone using the api client would call ```$client->uploadFile()``` to use your api.
+
+To create a resource, we need to extend ```\BristolSU\ApiToolkit\Contracts\ClientResource```. This class defines all the functions users can use to actually make requests to the api. For example, getAll, getById, create etc. 
+
+We register this in your client by returning an array of method names and classes. If we wanted our user to call ```$client->uploadFile()->file()->getAll()``` our client would have the function
+
+[source,php]
+----
+    public static function getResources(): array
+    {
+        return [
+          'file' => FileClient::class
+        ];
+    }
+----
+
+The file client then defines a getAll method.
+
+## Methods
+
+In general, we will end up calling ```return $this->httpGet('/my/api/path')``` to actually make the request. Before this, we can set some stuff up though.
+
+### Pagination
+
+If your api call uses pagination, call ```$this->usesPagination()``` beforehand and the user will be able to iterate through different pages.
+
+### Parameters
+
+Any parameters you need access to in a method (e.g. file id) can be passed in through the method.
+
+[source,php]
+----
+    public function getById($fileId)
+    {
+        return $this->httpGet('/file/' . $fileId);
+    }
+----
+
+### Hydration
+
+Models are often easier to work with than json/arrays. To hydrate the response, e.g. transform it to models, you can use hydration. Before making the request, tell the toolkit how to hydrate the response by calling $this->hydrate($settings). The settings will be covered in a sec.
+
+Each model you want to use should extend ```BristolSU\ApiToolkit\Hydration\HydrationModel```. They don't need anything else in the class.
+
+The settings are as follows. Always start by making a static call, ```BristolSU\ApiToolkit\Hydration\Hydrate::new()```. 
+
+If you are expecting an array of models (assuming your model is File), then call ```array(File::class)```. If you're just expecting one model, call ```model(File::class)```.
+
+[source,php]
+----
+$this->hydrate(
+  Hydrate::new()->model(File::class)
+);
+
+$this->hydrate(
+  Hydrate::new()->array(File::class)
+);
+----
+
+If the models also have a child (say an array of comments), you may do the same in the ```child``` method, specifying what key the comments will fall under.
+
+[source,php]
+----
+
+$this->hydrate(
+  Hydrate::new()->array(File::class)
+    ->child(
+        Hydrate::new()->array('comments', Comment::class)
+    )
+);
+----
+
+Finally, the replace method replaces any key with another. If your response returns 'file_name' and you just want it to be accessed by ```$file->name``` rather than ```$file->file_name```:
+
+[source,php]
+----
+$this->hydrate(
+  Hydrate::new()->model(File::class)->replace('file_name', 'name')
+);
+----
