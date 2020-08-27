@@ -1,0 +1,88 @@
+= API Tools
+
+Within your methods to make http requests, you may need to do various tasks. 
+
+For example, you may need to change the page to retrieve if the user has asked for a different page. You'll need to create the correct URL for accessing a module. Having made the request, you need to convert the response from JSON/xml to an array. You'll also then need to hydrate your models so you can return models rather than an array.
+
+To do this, we've implemented a middleware-style system. Each of the features are described in depth below and can be used by your client resources.
+
+== Pagination
+
+If your API call uses pagination, call ```$this->usesPagination()``` beforehand and the user will be able to iterate through different pages.
+
+Calling this function will give users access to a ```page($page)``` and ```perPage($perPage)``` function, to set the page and the perPage value. These will by default be passed in the query string as 'page' and 'per_page', but you may customise them by calling ```paginationPageKey('page')``` and ```paginationPerPageKey('per_page')```.
+
+.Using Pagination
+====
+public function getAll()
+{
+    $this->usesPagination();
+    
+    // Customise the keys if necessary
+    $this->paginationPageKey('my_page_key');
+    $this->paginationPerPageKey('per_page_key');
+    
+    return $this->httpGet('/path')
+}
+====
+
+- Also understands response, must be laravel default. What is available on response.
+
+== Hydration
+
+Models are often easier to work with than json/arrays. To hydrate the response, e.g. transform it to models, you can use hydration. Before making the request, tell the toolkit how to hydrate the response by calling $this->hydrate($settings). The settings will be covered in a sec.
+
+Each model you want to use should extend ```BristolSU\ApiToolkit\Hydration\HydrationModel```. They don't need anything else in the class.
+
+The settings are as follows. Always start by making a static call, ```BristolSU\ApiToolkit\Hydration\Hydrate::new()```. 
+
+If you are expecting an array of models (assuming your model is File), then call ```array(File::class)```. If you're just expecting one model, call ```model(File::class)```.
+
+[source,php]
+----
+$this->hydrate(
+  Hydrate::new()->model(File::class)
+);
+
+$this->hydrate(
+  Hydrate::new()->array(File::class)
+);
+----
+
+If the models also have a child (say an array of comments), you may do the same in the ```child``` method, specifying what key the comments will fall under.
+
+[source,php]
+----
+
+$this->hydrate(
+  Hydrate::new()->array(File::class)
+    ->child(
+        Hydrate::new()->array('comments', Comment::class)
+    )
+);
+----
+
+Finally, the replace method replaces any key with another. If your response returns 'file_name' and you just want it to be accessed by ```$file->name``` rather than ```$file->file_name```:
+
+[source,php]
+----
+$this->hydrate(
+  Hydrate::new()->model(File::class)->replace('file_name', 'name')
+);
+----
+
+== Converting responses from JSON/XML
+
+- Content type set
+
+== Editing the request
+
+- Using $httpClient directly
+
+== Module API Path
+
+- Need to build
+
+== Build your own tools
+
+- Trait and methods 

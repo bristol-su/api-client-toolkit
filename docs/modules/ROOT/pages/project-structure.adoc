@@ -1,0 +1,57 @@
+= Project Structure
+
+Your project will always have the same basic structure. It may be made more complicated if needed, but most of the time this structure will be enough.
+
+== Client Definitions
+
+All your work should be done in the ```src/``` folder. All references to file locations in this section will be within the src folder.
+
+=== Client Resource Group
+
+In the src folder, you should create a file called ```Client.php```, which will be the main entry point into your module (the _Client Resource Group_). There will only ever be one of these.
+
+=== Client Resource
+
+From this file, you will make reference to each _Client Resource_ class. These should be stored in a folder called ```clients/```. Each Resource should have a class called ```ResourceNameClient.php```.
+
+=== Models
+
+Models should be kept in a folder called ```models/``` and should be named as ```Resource.php```.
+
+== Tests
+
+Tests should be done in the ```tests/``` folder. All tests should extend ```tests/TestCase.php```. Unit tests will be put in the Unit folder and feature tests in the Feature folder. Tests should be named after the class they test, appended with ```Test```.
+
+== Docs
+
+We have yet to decide on the docs structure. It'll use antora, but for now you are free to document however you want.
+
+
+.Upload File, with a file and comment resource
+====
+
+[source,]
+----
+- src
+    - Client.php  // The main entry point
+    - clients/
+        - FileClient.php  // Used to access the file resource
+        - CommentClient.php  // Used to access the comments resource
+    - models/
+        - File.php  // Represents a file model
+        - Comment.php  // Represents a comment model
+- tests
+    - TestCase.php
+    - Unit
+        - ClientTest.php
+        - clients/
+            - FileClientTest.php
+            - CommentClientTest.php
+        - models/
+            - FileTest.php
+            - CommentTest.php
+    - Feature
+        - ClientTest.php
+----
+
+====

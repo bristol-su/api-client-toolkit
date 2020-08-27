@@ -1,0 +1,66 @@
+= Client Resource
+
+These classes will be where most your code will live. Each Client Resource is responsible for a set of http requests based around a single resource. 
+
+For example, the ```FileClient.php``` will have functions such as 
+
+- ```getAll()```
+- ```getById($id)```
+- ```create($path, $name)```
+- ```delete($id)```
+- ```update($id, $name)```
+
+These functions will handle the http request and return a result. We'll get onto how to _hydrate_ the response to return models rather than json/an array, how to handle pagination and more later on.
+
+
+== Creating a Resource
+
+A resource is simply a class that extends the ```\BristolSU\ApiToolkit\Contracts\ClientResource``` class. There are no methods that need to be implemented - rather, you can just specify any methods you want users to be able to use.
+
+== What goes in the methods?
+
+To a very basic level, there is only a single function call required in any method. This function call makes the HTTP request and returns the result.
+
+HTTP requests should always be one of GET, POST, PUT, DELETE or PATCH. There are five corresponding methods, ```httpGet()```, ```httpPost()```, ```httpPut()```, ```httpDelete()``` and ```httpPatch()```. These functions all take a url to make the request to. You can also just use the ```request()``` method, which takes a method name and url.
+
+The URL will have to take into account the module URL if you're developing a module, but this will again be covered later.
+
+== Accepting parameters
+
+Methods can accept parameters to be passed by a user, such as IDs or parameters. For example, a ```getById``` method can accept an ID:
+
+[source,php]
+----
+public function getById($id)
+{
+    return $this->httpGet('/path/file/' . $id);
+}
+
+// Called using
+$client->example()->file()->getById(1);
+----
+
+== Class-wide parameters
+
+Sometimes you may need something to be passed into the client resource constructor. For example, for Control we allow users to change the base url we use, since the portal can change the base url. 
+
+To do this, our resource construct looks like:
+[source,php]
+----
+public function __construct(string $basePath = '/api/control')
+{
+    $this->basePath = $basePath;
+}
+
+public function getById($id)
+{
+    return $this->httpGet($this->basePath . '/group/' + $id);
+}
+----
+
+To pass a different base path, a user can pass it when specifying the resource:
+
+[source,php]
+----
+$client->control()->group('/new/basepath')->getById(1);
+----

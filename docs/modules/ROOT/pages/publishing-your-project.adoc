@@ -1,0 +1,32 @@
+= Publishing your Project
+
+Having created and tested your API Client, it's ready to be used by anyone who uses your module. To make it accessible, it should be stored on github.
+
+Push your work to github, and release it using the release feature in GitHub. Submit it to packagist to allow composer to find it https://packagist.org/packages/submit[here].
+
+You should then submit a pull request to the API package, found at https://github.com/bristol-su/api-client.
+
+This pull request should modify the composer.json file to add a suggestion. This is so that users are told about your extension, but it isn't installed by default. This means the API client can be kept as slim as possible for any users use case.
+
+.composer.json file in the api-client repository
+****
+
+[source,json]
+----
+{
+  "name": "bristol-su/api-client",
+  ...
+  "suggest": {
+    "symfony/cache": "Allows for psr-16 compliant caching of HTTP results",
+    "guzzlehttp/guzzle": "A psr compliant HTTP client for making requests",
+    
+    "bristol-su/example-api-client": "Extension to the API client for making requests to the Example module"
+  },
+  ...
+}
+
+----
+
+****
+
+Users can now pull your repository in using composer.

@@ -1,0 +1,41 @@
+= Creating your Project
+
+In general, even though every API client extension will provide different functionality, they should all look very similar.
+
+To that end, we provide a template to get you started creating an API client extension. To get started simply run:
+
+[source,php]
+----
+composer create-project bristol-su/example-api-client my-module-api-client
+----
+
+Replace my-module with the name of your module. 
+
+== Make the template your own
+
+=== composer.json
+
+In the composer.json file, you will need to make the following changes
+
+- Come up with a name for your client. For example, 'my-name/my-module-api-client'. This is the name people will use to pull your client into their projects.
+- Change the description to represent your client
+- Change the 'authors' section to represent your details.
+- Change the namespaces in both 'autoload' and 'autoload-dev'. We recommend changing 'YourNamespace' to your name, so it is unique to you, and 'Module' to your module alias.
+
+Having done this, run composer update to make your changes.
+
+=== README.md
+
+You can make this file your own. At the very least, change any reference of the example module to your module, and replace
+
+- your-username -> your github username
+- your-repository -> the repository this project will be saved in. Normally my-module-api-client.
+
+=== tests
+
+You may remove the example test, and change the TestCase namespace to match the dev namespace specified in your composer.json file.
+
+
+== Now what?
+
+From here, you're ready to start creating your API client extension. Read on to find out where to put your files, how to publish your package and how to make your client as useful as possible.

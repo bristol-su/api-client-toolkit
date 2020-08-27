@@ -1,0 +1,43 @@
+= Client Resource Group
+
+As we've already shown, the Client Resource Group is the main entry point into your extension. It gives users a single place to access all the resources they can use through your API.
+
+== Creating the Client
+
+A Client Resource group simply extends ```\BristolSU\ApiToolkit\Contracts\ClientResourceGroup```. This is an abstract class that will tell you what methods you need to implement to create your client.
+
+.Example Client
+****
+
+[source,php]
+----
+<?php
+
+namespace BristolSU\ApiClientImplementation\ExampleModule;
+
+class Client extends \BristolSU\ApiToolkit\Contracts\ClientResourceGroup
+{
+
+    public static function getMethodName(): string
+    {
+        return 'example';
+    }
+
+    public static function getResources(): array
+    {
+        return [
+          'file' => BristolSU\ApiClientImplementation\ExampleModule\Clients\FileClient::class
+        ];
+    }
+}
+----
+
+****
+
+=== getMethodName
+
+This function tells the base API client how your client can be accessed. In this case, with a name of 'example', a user will be able to access this class using ```$client->example()```. 
+
+=== getResources
+
+This is an array of client resources your module registers for use. In this case, we just have a file. Therefore, we can access the FileClient (with all the methods for making http requests) by calling ```$client->example()->file()```.

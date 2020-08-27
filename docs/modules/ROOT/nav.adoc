@@ -1,1 +1,9 @@
 * xref:index.adoc[Introduction]
+* Getting Started
+** xref:creating-your-project.adoc[Creating your Project]
+** xref:project-structure.adoc[Project Structure]
+** xref:publishing-your-project.adoc[Publishing your Project]
+* Extending the Client
+** xref:resource-groups.adoc[Client Resource Group]
+** xref:resource.adoc[Client Resource]
+** xref:api-tools.adoc[API Tools]
