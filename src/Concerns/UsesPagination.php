@@ -51,13 +51,12 @@ trait UsesPagination
         return $this->usePagination;
     }
 
-    protected function usesPaginationPreRequest(HttpClient $client)
+    protected function usesPaginationPreRequest(HttpClient $client, string $uri)
     {
         $client->config()->addQuery([
           $this->pageKey => $this->page,
           $this->perPageKey => $this->perPage
         ]);
-        return $client;
     }
 
     protected function usesPaginationPostRequest(Response $response)

@@ -21,6 +21,9 @@ class Hydrator
     {
         $replacedModel = static::runReplace($singleModel, $hydrate->replace);
         foreach($hydrate->hydrate as $key => $childHydrate) {
+            if(!array_key_exists($key, $replacedModel)) {
+                throw new \Exception(sprintf('Key %s does not exist on the model and so could not be hydrated', $key));
+            }
             $replacedModel[$key] = Hydrator::hydrate($replacedModel[$key], $childHydrate);
         }
         return $hydrate->model::createFromArray($replacedModel);

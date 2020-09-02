@@ -71,18 +71,259 @@ $this->hydrate(
 );
 ----
 
-== Converting responses from JSON/XML
+== Converting responses from JSON/XML to an array
 
-- Content type set
+The API client will convert any response to an array. Although you expect to return a model to any user of your client, thanks to the hydrator, the hydrator itself needs an array to work. This isn't what your API will generally return - it will usually return JSON or XML.
+
+We control what the response will contain using the ```Accept``` header. A user of the client will set this header (generally ```application/json```), but they can theoretically set it to any content type and the portal will automatically convert your response to satisfy the request.
+
+If this header is set, the response will be converted from the content type to an array. Generally, this won't affect you as the developer of a client. The only time it will is if you require a specific content type (for example, if your API return JSON directly). In this case, make sure you set the ```Accept``` header correctly in your function before making the request.
 
 == Editing the request
 
-- Using $httpClient directly
+You can edit the request directly (adding headers, query strings, body etc) using the ```getClient()``` function. This will return a ```BristolSU\ApiToolkit\Contracts\HttpClient``` instance, through which you can access the ```config```.
+
+This object is generally what you will be dealing with. It contains functions to add/remove headers, query parameters, body, control the cache etc. See all the functions in the ```BristolSU\ApiToolkit\HttpClientConfig``` class or below.
+
+You will usually access this object as follows
+
+[source,php]
+----
+$config = $this->getClient()->config();
+----
+
+* *Headers*
+** ```addHeaders(array $headers)``` - Append an array of headers to the request.
+** ```addHeader(string $key, string $value)``` - Add a specific header to the request.
+** ```getHeader(string $key, $default = null)``` - Get the value of a header on the request.
+** ```getHeaders(): array``` - Get all headers set on the request.
+* *Body*
+** ```addBody(array $headers)``` - Append an array to the request body.
+** ```addBodyElement(string $key, string $value)``` - Add a specific key to the request body.
+** ```getBodyElement(string $key, $default = null)``` - Get the value of a specific key on the request body.
+** ```getBody(): array``` - Get the body set on the request
+* *Query*
+** ```addQuery(array $headers)``` - Append an array to the request query.
+** ```addQueryElement(string $key, string $value)``` - Add a specific key to the request query.
+** ```getQueryElement(string $key, $default = null)``` - Get the value of a specific key on the request query.
+** ```getQuery(): array``` - Get the query set on the request
+* *Cache*
+** ```cache(bool $shouldCache) ``` - Whether or not the result should be cached. See the _cache_ section for more information.
+** ```shouldCache()``` - Returns whether or not the result will be cached.
+* *SSL Verification*
+** ```verifySSL(bool $verify)``` - Whether or not the SSL certificate should be verified.
+* ```shouldVerifySSL()``` - Returns whether or not the SSL certificate should be verified.
+
+== Cache
+
+All ```GET``` requests will be cached by default, without you needing to do anything. Users are also able to disable the cache for a single request, so there's generally no reason not to cache a request by default.
+
+If there really is a need for a specific endpoint, and the endpoint should be a ```GET``` request, you can call ```disableCaching``` to disable the cache. This will lead to an adverse effect on performance for end users, so please only do this if absolutely necessary.
+
+[source,php]
+----
+public function getAll()
+{
+    $this->usesPagination();
+    // ...
+    $this->disableCaching();
+    return $this->httpGet(...);
+}
+----
 
 == Module API Path
 
-- Need to build
+The Module API Path tool converts a normal endpoint to one that references a module instance. This is needed so that modules can create a client. Modules are staged at any number of URLs, defined by a user who sets up the module on the portal. The same module, e.g. a module that shows HTML, could be at the endpoint ```/api/a/borrowing/library-books/static-page``` or ```/api/p/lending/garden-tools/static-page```. This URL is made of several parts
+
+- *a* or *p*. This specifies whether the admin API or participant API should be used.
+- Activity Name - e.g. borrowing. This specifies the activity the module is in.
+- Module Name - e.g. garden-tools. This specifies the specific name of the module.
+- static-page - this is the _alias_ of the module.
+
+Furthermore, we always prepend user information to the API endpoint. For example, if a user with an ID of 2 was trying to access the API, under their membership to the group with an ID of 5, we'd need to append ```user_id=2&group_id=5```. 
+
+Fortunately, this is all taken care of for you. Users are able to use public functions to set the information needed by this tool. The tool will dynamically set the query for you, and prepend your endpoint with the full API path.
+
+This example is for a module API client that wants to make use of the tool.
+
+[source,php]
+----
+public function getAll()
+{
+    $this->usesModuleUrl('module-alias');
+    
+    return $this->httpGet('/my-endpoint');
+}
+----
+
+A lot went on there, so lets unpack it. First, we let the tool know we're making a module URL. We pass it the alias of our module, as it appears on the portal.
+
+The middleware system will add the correct query parameters on, and append your endpoint with the full module API endpoint using data (e.g. admin or not, activity name, module instance name) given by the user.
 
 == Build your own tools
 
-- Trait and methods 
+All these API tools have been built using a middleware structure. That is, each one is given the chance to modify the request and/or response each time someone uses the client.
+
+These tools have been set up by default, but it's easy to create your own to extend the API client functionality.
+
+Each tool is simply a trait. Ours are stored under the namespace ```\BristolSU\ApiToolkit\Concerns```, and have names corresponding to the functionality they provide the user.
+
+Each tool goes through a lifecycle each time a developer makes a request. The lifecycle consists of a set of methods with a prefix related to the trait name. For example, the prefix for the ```PutsTheKettleOn``` tool is ```putsTheKettleOn```. 
+
+=== Check if the tool should be used
+
+Each request will check against each tool to see if it should be used. For example, a tool that tells the request to cache itself will only be used if the developer hasn't explicitly disabled caching.
+
+This method should be the ```canHandle(HttpClient $client)``` method. It retrieves the HttpClient, and returns a boolean determining whether or not the tool should be used. This can be based on anything. For example, it may be dependent on if there are query parameters in the request, the method of the request, or something else entirely.
+
+The something else is usually user/developer input. A developer may enable pagination by calling ```$this->usesPagination()```. This sets a private variable to true, and the ```canHandle``` method return the value of this variable. In this way, pagination is only set if the developer needs it to be.
+
+[source,php]
+----
+trait UsesPagination
+{
+    private $usePagination = false;
+    
+    // The developer can call this function to mark the request as using pagination
+    protected function usesPagination()
+    {
+        $this->usePagination = true;
+    }
+    
+    // This method is called to determine whether or not the tool should be used for a given request.
+    protected function usesPaginationCanHandle(HttpClient $client): bool
+    {
+        return $this->usePagination;
+    }
+}
+----
+
+For caching, this could be user input. A user could disable a caching tool on a given request by calling ```withoutCaching()```. This method would be defined on the ```CachesResponse``` trait, and would be marked as not being handle-able if the user has said without caching. This works exacty the same as above, except the ```withoutCaching``` method must be public so a user can use it, whereas the ```usesPagination``` method is protected so only a developer can use it.
+
+Make sure you return ```$this``` in any methods for users to use, so they can use the fluent interface!
+
+=== Pre-request tooling
+
+The next function to be aware of is the ```preRequest``` function. This receives an ```HttpClient``` and a url, and again may do whatever it needs to transform the request ready for transport. It can directly manipulate the ```HttpClient``` config, or return a new string to change the url.
+
+In the ```UsesPagination``` example, this function will add the ```page``` and ```per_page``` variables to the request query. A user may override these, hence we also need functions a user can call to set the page.
+
+[source,php]
+----
+trait UsesPagination
+{
+
+    private $this->page = 1;
+    
+    private $this->perPage = 10;
+    
+    public function page(int $page = 1)
+    {
+        $this->page = $page;
+        return $this;
+    }
+
+    public function perPage(int $perPage = 10)
+    {
+        $this->perPage = $perPage;
+        return $this;
+    }
+    
+    protected function usesPaginationPreRequest(HttpClient $client, string $uri)
+    {
+        $client->config()->addQuery([
+          $this->pageKey => $this->page,
+          $this->perPageKey => $this->perPage
+        ]);
+    }
+
+}
+----
+
+This function can be left out if your tool doesn't need to manipulate the client.
+
+If you want to change the url, you may do by returning a new url. Otherwise, make sure you don't return anything from this function!
+
+=== Post request tooling
+
+Finally, we can manipulate a response. This function receives a ```\BristolSU\ApiToolkit\Response``` instance, and must return it once done. You can set dynamic attributes on this class, or use the ```setBody``` function to set a new body.
+
+[source,php]
+----
+trait UsesPagination
+{
+    protected function usesPaginationPostRequest(Response $response)
+    {
+        $body = $response->getBody(); // Get the body as an array
+        
+        // Set attributes of the response - in this case, information about the pagination.
+        // These attributes will be automatically created.
+        $response->current_page = $body['current_page'];
+        $response->records_from = $body['from'];
+        ...
+        $response->total_records = $body['total'];
+        
+        // Set the body. This is because the actual body is kept in a sub-array, so the pagination will need to expose this as the real body.
+        $response->setBody($body['data']);
+        
+        // Return the final response
+        return $response;
+    }
+}
+----
+
+=== Register your tool
+
+The last thing to do is register your tool. This means you need to _use_ the trait at the top of your class. The tools above are all used by the base class, so you only need to use custom tools.
+
+Finally, you will need to call the function ```addTool($alias, $class)```. The alias is the 'prefix' of the functions you've used, which is usually your trait name. The class is the full namespaced class name of your trait.
+
+[source,php]
+----
+class MyClient
+{
+    use \My\Namespace\MyTool;
+    
+    public function __construct()
+    {
+        $this->addTool('myTool', \My\Namespace\MyTool::class);
+    }
+    
+    public function getAll()
+    {
+        $this->functionOnMyTool();
+        
+        // Your tool can now be used as described above.
+    }
+    
+}
+
+trait MyTool
+{
+    public function myToolCanHandle(HttpClient $client): bool
+    {
+        //
+    }
+    
+    ...
+}
+----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
